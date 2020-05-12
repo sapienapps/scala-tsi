@@ -40,6 +40,15 @@ object TypescriptGenPlugin extends AutoPlugin {
     sourceGenerators in Compile += generateTypescriptGeneratorApplication in Compile
   )
 
+  def getFilePath(file: File): String = {
+    val OS = System.getProperty("os.name").toLowerCase
+    if (OS.indexOf("win") >= 0) {
+      file.getAbsolutePath.replace("\\", "\\\\")
+    } else {
+      file.getAbsolutePath
+    }
+  }
+
   def createTypescriptGenerationTemplate(
     imports: Seq[String],
     typesToGenerate: Seq[String],
@@ -49,7 +58,7 @@ object TypescriptGenPlugin extends AutoPlugin {
     val targetFile = sourceManaged / "nl" / "codestar" / "scala" / "ts" / "generator" / "ApplicationTypescriptGeneration.scala"
 
     val toWrite: String = txt
-      .generateTypescriptApplicationTemplate(imports, typesToGenerate, typescriptOutputFile.getAbsolutePath)
+      .generateTypescriptApplicationTemplate(imports, typesToGenerate, getFilePath(typescriptOutputFile))
       .body
       .stripMargin
 
